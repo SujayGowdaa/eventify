@@ -1,6 +1,6 @@
 function App() {
   return (
-    <div>
+    <header>
       <h1 className='text-4xl font-brand text-gradient-orange'>
         Discover. Create. Experience.
       </h1>
@@ -8,7 +8,7 @@ function App() {
         Eventify makes it easy to discover, create, and manage events – all in
         one place.
       </p>
-    </div>
+    </header>
   );
 }
 
