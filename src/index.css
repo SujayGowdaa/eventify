@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Jomhuria&family=Poppins:wght@200;300;400;500;600;700;800;900&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --font-poppins: Poppins, sans-serif;
+  --font-brand: Jomhuria;
+
+  --color-accent: #3395f7;
+  --color-accent-dark: #3660e9;
+  --color-accent-secondary: #f49c3f;
+  --color-accent-secondary-dark: #e4592a;
+
+  --color-base-light: #f4f6fb;
+  --color-base-medium: #babfd1;
+  --color-base-dark: #6b738e;
+  --color-base-black: #1d1e22;
+}
+
+body {
+  @apply font-poppins;
+}
+
+@layer components {
+  .text-gradient-blue {
+    @apply bg-linear-to-r from-accent to-accent-dark bg-clip-text text-transparent;
+  }
+  .text-gradient-orange {
+    @apply bg-linear-to-r from-accent-secondary to-accent-secondary-dark bg-clip-text text-transparent;
+  }
+}
