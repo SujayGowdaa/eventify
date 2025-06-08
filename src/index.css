@@ -27,4 +27,38 @@ body {
   .text-gradient-orange {
     @apply bg-linear-to-r from-accent-secondary to-accent-secondary-dark bg-clip-text text-transparent;
   }
+  .bg-gradient-blue {
+    @apply bg-linear-to-r from-accent to-accent-dark;
+  }
+  .bg-gradient-orange {
+    @apply bg-linear-to-r from-accent-secondary to-accent-secondary-dark;
+  }
+
+  .button-blue {
+    @apply bg-linear-to-r from-accent to-accent-dark px-4 py-2 rounded-full text-white capitalize shadow-md outline-2 outline-accent-dark hover:bg-gradient-to-r hover:from-accent-dark hover:to-accent active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark flex items-center gap-2 max-w-max font-medium;
+  }
+
+  .button-orange {
+    @apply bg-linear-to-r from-accent-secondary to-accent-secondary-dark px-4 py-2 rounded-full text-white capitalize shadow-md outline-2 outline-accent-secondary-dark hover:bg-gradient-to-r hover:from-accent-secondary-dark hover:to-accent-secondary active:from-accent active:to-accent-dark active:outline-accent-dark flex items-center gap-2 max-w-max font-medium;
+  }
+
+  .button-chips {
+    @apply text-xs outline outline-base-dark p-1.5 rounded-full px-3 text-base-dark cursor-pointer hover:bg-accent hover:text-white hover:outline-accent-dark capitalize;
+  }
+
+  .button-chips-active {
+    @apply text-xs outline outline-accent-secondary-dark p-1.5 rounded-full px-3 text-white bg-accent-secondary cursor-pointer hover:bg-accent hover:text-white hover:outline-accent-dark capitalize;
+  }
+
+  .dropdown-chips {
+    @apply text-xs outline outline-base-dark p-1.5 rounded-full px-3 text-base-dark cursor-pointer hover:bg-accent hover:text-white hover:outline-accent-dark capitalize;
+  }
+
+  .date-chips {
+    @apply text-xs outline outline-base-dark p-1.5 rounded-full px-3 text-base-dark cursor-pointer hover:bg-accent hover:text-white hover:outline-accent-dark capitalize;
+  }
+
+  .button-event-blue {
+    @apply text-sm bg-linear-to-r from-accent to-accent-dark px-4 py-2 rounded-full text-white capitalize shadow-md outline-2 outline-accent-dark hover:bg-gradient-to-r hover:from-accent-dark hover:to-accent active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark flex justify-between items-center gap-2 font-medium w-full cursor-pointer;
+  }
 }
