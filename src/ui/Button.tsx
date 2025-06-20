@@ -6,6 +6,8 @@ type LinkProps = {
   children: ReactNode;
   to: string;
   color?: 'blue' | 'orange';
+  fullWidth: boolean;
+  isOutline?: boolean;
 };
 
 type ButtonProps = {
@@ -13,16 +15,26 @@ type ButtonProps = {
   onClick: () => void;
   color?: 'blue' | 'orange';
   isBtnEvent?: boolean;
+  fullWidth: boolean;
+  isOutline?: boolean;
 };
 
 type Props = LinkProps | ButtonProps;
 
-export default function Button({ children, color = 'blue', ...props }: Props) {
+export default function Button({
+  children,
+  color = 'blue',
+  fullWidth,
+  isOutline = false,
+  ...props
+}: Props) {
   if ('to' in props) {
     return (
       <RouterLink
         to={props.to}
-        className={`${color === 'blue' ? 'button-blue' : 'button-orange'}`}
+        className={`${color === 'blue' ? 'button-blue' : 'button-orange'} ${
+          fullWidth ? 'w-full' : 'max-w-max'
+        }`}
       >
         {children}
         <FiArrowRightCircle className=' text-xl' />
@@ -38,9 +50,13 @@ export default function Button({ children, color = 'blue', ...props }: Props) {
           props.isBtnEvent
             ? 'button-event-blue'
             : color === 'blue'
-            ? 'button-blue'
-            : 'button-orange'
-        }`}
+            ? isOutline
+              ? 'button-outline-blue'
+              : 'button-blue'
+            : isOutline
+            ? 'button-outline-orange'
+            : 'button-blue'
+        } ${fullWidth ? 'w-full' : 'max-w-max'}`}
       >
         {children}
         <FiArrowRightCircle className=' text-xl' />

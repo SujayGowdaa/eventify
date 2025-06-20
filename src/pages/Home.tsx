@@ -5,6 +5,8 @@ import SearchInput from '../components/SearchInput';
 import Button from '../ui/Button';
 import Container from '../ui/Container';
 import Flex from '../ui/Flex';
+import HeroParagraph from '../ui/HeroParagraph';
+import HeroTitle from '../ui/HeroTitle';
 
 export default function Home() {
   const dummyEvents = [
@@ -86,15 +88,17 @@ export default function Home() {
     <header>
       <Container className=' flex flex-col items-center text-center gap-6'>
         <div>
-          <h1 className='text-6xl font-brand text-gradient-orange'>
-            Discover. Create. Experience.
-          </h1>
-          <p className=' text-lg text-base-black mt-[-0.5rem]'>
+          <div className=' max-w-max mx-auto'>
+            <HeroTitle>Discover. Create. Experience.</HeroTitle>
+          </div>
+          <HeroParagraph>
             Eventify makes it easy to discover, create, and manage events – all
             in one place.
-          </p>
+          </HeroParagraph>
         </div>
-        <Button to='/'>step into the world of events</Button>
+        <Button fullWidth={false} to='/'>
+          step into the world of events
+        </Button>
       </Container>
       <Container>
         <Flex>

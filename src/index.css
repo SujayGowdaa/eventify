@@ -35,11 +35,11 @@ body {
   }
 
   .button-blue {
-    @apply bg-linear-to-r from-accent to-accent-dark px-4 py-2 rounded-full text-white capitalize shadow-md outline-2 outline-accent-dark hover:bg-gradient-to-r hover:from-accent-dark hover:to-accent active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark flex items-center gap-2 max-w-max font-medium;
+    @apply bg-linear-to-r from-accent to-accent-dark px-4 py-2 rounded-full text-white capitalize shadow-md outline-2 outline-accent-dark hover:bg-gradient-to-r hover:from-accent-dark hover:to-accent active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark flex items-center gap-2 font-medium cursor-pointer justify-between;
   }
 
   .button-orange {
-    @apply bg-linear-to-r from-accent-secondary to-accent-secondary-dark px-4 py-2 rounded-full text-white capitalize shadow-md outline-2 outline-accent-secondary-dark hover:bg-gradient-to-r hover:from-accent-secondary-dark hover:to-accent-secondary active:from-accent active:to-accent-dark active:outline-accent-dark flex items-center gap-2 max-w-max font-medium;
+    @apply bg-linear-to-r from-accent-secondary to-accent-secondary-dark px-4 py-2 rounded-full text-white capitalize shadow-md outline-2 outline-accent-secondary-dark hover:bg-gradient-to-r hover:from-accent-secondary-dark hover:to-accent-secondary active:from-accent active:to-accent-dark active:outline-accent-dark flex items-center gap-2 font-medium cursor-pointer justify-between;
   }
 
   .button-chips {
@@ -59,6 +59,22 @@ body {
   }
 
   .button-event-blue {
-    @apply text-sm bg-linear-to-r from-accent to-accent-dark px-4 py-2 rounded-full text-white capitalize shadow-md outline-2 outline-accent-dark hover:bg-gradient-to-r hover:from-accent-dark hover:to-accent active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark flex justify-between items-center gap-2 font-medium w-full cursor-pointer;
+    @apply text-sm bg-linear-to-r from-accent to-accent-dark px-4 py-2 rounded-full text-white capitalize shadow-md outline-2 outline-accent-dark hover:bg-gradient-to-r hover:from-accent-dark hover:to-accent active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark flex justify-between items-center gap-2 font-medium w-full cursor-pointer;
+  }
+
+  .button-outline-blue {
+    @apply text-sm bg-linear-to-r from-accent to-accent-dark px-4 py-2 rounded-full capitalize shadow-md outline-2 outline-accent-dark hover:bg-gradient-to-r hover:from-accent-dark hover:to-accent active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark text-transparent bg-clip-text flex justify-between items-center gap-2 font-medium w-full cursor-pointer;
+  }
+
+  .input-label {
+    @apply text-xl capitalize font-semibold text-base-black cursor-pointer;
+  }
+
+  .input-field {
+    @apply px-4 py-2 rounded-full outline-2 outline-base-medium bg-base-light placeholder:capitalize focus:outline-accent;
+  }
+
+  .text-link {
+    @apply capitalize text-accent font-medium hover:text-accent-dark hover:underline underline-offset-2;
   }
 }

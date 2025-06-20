@@ -7,7 +7,7 @@ function Navbar() {
     { label: 'Attend Event', href: '/attend-event' },
     { label: 'Create Event', href: '/create-event' },
     { label: 'Contact', href: '/contact' },
-    { label: 'Login/Sign Up', href: '/auth' },
+    { label: 'Login/Sign Up', href: '/login' },
   ];
 
   return (

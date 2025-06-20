@@ -6,7 +6,7 @@ export default function AppLayout() {
   return (
     <>
       <Navbar />
-      <main className=' max-w-[1600px] mx-auto'>
+      <main className=' max-w-[1600px] mx-auto p-16'>
         <Outlet />
       </main>
       <Footer />
