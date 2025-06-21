@@ -3,6 +3,7 @@ import AppLayout from '../layouts/AppLayout';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import SignUp from '../pages/SignUp';
+import EventDetails from '../pages/EventDetails';
 
 export const router = createBrowserRouter([
   {
@@ -18,10 +19,10 @@ export const router = createBrowserRouter([
         path: '/sign-up',
         element: <SignUp />,
       },
-      // { path: 'attend', element: <AttendEvent /> },
-      // { path: 'create', element: <CreateEvent /> },
-      // { path: 'contact', element: <Contact /> },
-      // { path: 'about', element: <About /> },
+      {
+        path: '/event-details/:id',
+        element: <EventDetails />,
+      },
     ],
   },
 ]);

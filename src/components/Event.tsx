@@ -51,7 +51,7 @@ const Event = ({
         </div>
       </div>
       <div className=' grow flex items-end'>
-        <Button onClick={onBook} isBtnEvent={true}>
+        <Button fullWidth={true} onClick={onBook} isBtnEvent={true}>
           Book Tickets
         </Button>
       </div>

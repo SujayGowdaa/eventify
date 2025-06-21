@@ -46,20 +46,32 @@ export default function Button({
     return (
       <button
         onClick={props.onClick}
-        className={`${
-          props.isBtnEvent
-            ? 'button-event-blue'
-            : color === 'blue'
-            ? isOutline
-              ? 'button-outline-blue'
-              : 'button-blue'
-            : isOutline
-            ? 'button-outline-orange'
-            : 'button-blue'
-        } ${fullWidth ? 'w-full' : 'max-w-max'}`}
+        className={`
+          ${
+            !props.isBtnEvent && color === 'blue'
+              ? 'button-blue'
+              : 'button-orange'
+          }
+          ${
+            props.isBtnEvent && color === 'blue'
+              ? 'button-event-blue'
+              : 'button-event-orange'
+          }
+          ${isOutline && 'button-outline-blue'} 
+          ${fullWidth ? 'w-full' : 'max-w-max'} group`}
       >
         {children}
-        <FiArrowRightCircle className=' text-xl' />
+        <FiArrowRightCircle
+          className={`${
+            !props.isBtnEvent && color === 'blue' && !isOutline && ' text-white'
+          } ${
+            props.isBtnEvent && color === 'blue' && !isOutline && ' text-white'
+          } ${
+            isOutline &&
+            'text-accent group-hover:text-accent-dark group-active:text-accent-secondary'
+          } 
+    text-xl`}
+        />
       </button>
     );
   }

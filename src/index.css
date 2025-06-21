@@ -63,7 +63,7 @@ body {
   }
 
   .button-outline-blue {
-    @apply text-sm bg-linear-to-r from-accent to-accent-dark px-4 py-2 rounded-full capitalize shadow-md outline-2 outline-accent-dark hover:bg-gradient-to-r hover:from-accent-dark hover:to-accent active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark text-transparent bg-clip-text flex justify-between items-center gap-2 font-medium w-full cursor-pointer;
+    @apply text-sm bg-linear-to-r from-accent to-accent-dark px-4 py-2 rounded-full capitalize outline-2 outline-accent-dark hover:bg-gradient-to-r hover:from-accent-dark hover:to-accent active:from-accent-secondary active:to-accent-secondary-dark active:outline-accent-secondary-dark text-transparent bg-clip-text flex justify-between items-center gap-2 font-medium w-full cursor-pointer bg-white shadow-none;
   }
 
   .input-label {
