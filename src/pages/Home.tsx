@@ -96,7 +96,7 @@ export default function Home() {
             in one place.
           </HeroParagraph>
         </div>
-        <Button fullWidth={false} to='/'>
+        <Button fullWidth={false} to='/login'>
           step into the world of events
         </Button>
       </Container>

@@ -1,5 +1,6 @@
 import Links from '../ui/Links';
 import logo from '../assets/logo/eventify_logo.png';
+import { Link } from 'react-router-dom';
 
 function Navbar() {
   const navbarLinks = [
@@ -13,7 +14,9 @@ function Navbar() {
   return (
     <nav className=' max-w-[1800px] mx-auto'>
       <div className=' flex justify-between items-center px-8 py-8'>
-        <img src={logo} alt='eventify' className=' h-8 w-auto' />
+        <Link to={'/'}>
+          <img src={logo} alt='eventify' className=' h-8 w-auto' />
+        </Link>
         <ul className=' flex gap-8'>
           {navbarLinks.map((link) => {
             return (

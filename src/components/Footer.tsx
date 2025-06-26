@@ -28,7 +28,7 @@ export default function Footer() {
   return (
     <footer>
       <div className=' pt-16'>
-        <div className='flex gap-16 justify-center text-center border-t border-base-medium p-16'>
+        <div className='flex gap-16 border-t justify-center border-base-medium p-16'>
           <div>
             <h4 className='font-semibold text-base-black mb-2'>Quick Links</h4>
             <ul className='space-y-1'>

@@ -10,13 +10,13 @@ import { FaGoogle } from 'react-icons/fa';
 function Login() {
   return (
     <Container className=' flex flex-col gap-10 shadow-lg rounded-2xl py-16 px-16 outline-2 outline-base-light'>
-      <Flex className=' gap-0'>
+      <div>
         <HeroTitle>Log in to Eventify</HeroTitle>
         <HeroParagraph>
           Access your personalized dashboard, manage bookings, and discover
           exclusive events.
         </HeroParagraph>
-      </Flex>
+      </div>
       <form>
         <Flex className=' gap-12'>
           <Flex className=' gap-8'>

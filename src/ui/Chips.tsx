@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 type Props = {
   onClick: () => void;
@@ -6,10 +6,19 @@ type Props = {
 };
 
 export default function Chips({ onClick, children }: Props) {
+  const [isActive, setIsActive] = useState<boolean>(false);
+
   return (
     <button
-      onClick={onClick}
-      className={`${false ? 'button-chips-active' : 'button-chips'}`}
+      onClick={() => {
+        setIsActive(!isActive);
+        onClick();
+      }}
+      className={`${
+        isActive
+          ? 'button-chips-active bg-accent-secondary outline-accent-secondary-dark'
+          : 'button-chips'
+      }`}
     >
       {children}
     </button>

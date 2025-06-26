@@ -1,7 +1,7 @@
 import Chips from '../ui/Chips';
 import Flex from '../ui/Flex';
 
-export default function Category() {
+export default function Category({ hideLabel = false }) {
   const categories = [
     'Conferences & Seminars',
     'Music & Concerts',
@@ -25,9 +25,11 @@ export default function Category() {
 
   return (
     <Flex className=' gap-4'>
-      <label className=' font-medium capitalize text-base-black'>
-        explore by category
-      </label>
+      {!hideLabel && (
+        <label className=' font-medium capitalize text-base-black'>
+          explore by category
+        </label>
+      )}
       <div className=' flex gap-4 flex-wrap'>
         {categories.map((chip) => {
           return (

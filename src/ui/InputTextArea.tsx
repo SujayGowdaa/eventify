@@ -1,15 +1,13 @@
 type Props = {
   id: string;
   label: string;
-  type?: string;
   placeholder: string;
   onChange: () => void;
 };
 
-export default function InputText({
+export default function InputTextArea({
   id,
   label,
-  type = 'text',
   placeholder,
   onChange,
 }: Props) {
@@ -18,12 +16,11 @@ export default function InputText({
       <label htmlFor={id} className='input-label'>
         {label}
       </label>
-      <input
+      <textarea
+        className=' input-field-textarea'
         id={id}
-        type={type}
         placeholder={placeholder}
         onChange={onChange}
-        className='input-field'
       />
     </div>
   );
