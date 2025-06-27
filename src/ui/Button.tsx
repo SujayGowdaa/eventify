@@ -17,6 +17,7 @@ type ButtonProps = {
   isBtnEvent?: boolean;
   fullWidth: boolean;
   isOutline?: boolean;
+  buttonType?: 'submit' | 'button';
 };
 
 type Props = LinkProps | ButtonProps;
@@ -45,6 +46,7 @@ export default function Button({
   if ('onClick' in props) {
     return (
       <button
+        type={props.buttonType || 'button'}
         onClick={props.onClick}
         className={`
           ${
@@ -76,5 +78,5 @@ export default function Button({
     );
   }
 
-  return null; // fallback if neither provided
+  return null;
 }

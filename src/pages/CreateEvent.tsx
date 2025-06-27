@@ -9,6 +9,9 @@ import InputDropdown from '../ui/InputDropdown';
 import InputDate from '../ui/InputDate';
 import Category from '../components/Category';
 import EventDateTimeCard from '../components/EventDateTimeCard';
+import Button from '../ui/Button';
+import { MdOutlineEditCalendar } from 'react-icons/md';
+import { FaRegTrashAlt } from 'react-icons/fa';
 
 type Props = {};
 
@@ -16,8 +19,22 @@ export default function CreateEvent({}: Props) {
   const [selected, setSelected] = useState<string>('');
   const [eventType, setEventType] = useState<string>('');
 
+  type FAQ = {
+    id: number;
+    question: string;
+    answer: string;
+  };
+
+  type FAQs = FAQ[];
+  const [faq, setFaq] = useState<Omit<FAQ, 'id'>>({
+    question: '',
+    answer: '',
+  });
+  const [faqs, setFaqs] = useState<FAQs>([]);
+  const [isFaqFormOpen, setFaqFormOpen] = useState<boolean>(false);
+  console.log(faqs);
   return (
-    <Flex>
+    <Flex className=' gap-10'>
       <Flex className=' gap-0'>
         <HeroTitle>Create Event</HeroTitle>
         <HeroParagraph>
@@ -191,6 +208,94 @@ export default function CreateEvent({}: Props) {
         <label className='input-label'>category</label>
         <Category hideLabel={true} />
       </Flex>
+      <Flex className=' gap-4'>
+        <label className='input-label'>frequently asked questions (FAQs)</label>
+        <Button
+          fullWidth={true}
+          isOutline={true}
+          onClick={() => {
+            setFaqFormOpen(!isFaqFormOpen);
+          }}
+        >
+          {!isFaqFormOpen ? 'add FAQ' : 'close FAQ form'}
+        </Button>{' '}
+      </Flex>{' '}
+      {isFaqFormOpen && (
+        <form action='' className=' flex flex-col gap-8 rounded-2xl'>
+          <Flex className=' gap-4'>
+            <InputText
+              id='question'
+              label='question'
+              placeholder='enter question'
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setFaq((ps) => {
+                  return {
+                    ...ps,
+                    question: e.target.value,
+                  };
+                });
+              }}
+              value={faq.question}
+            />
+            <InputText
+              id='answer'
+              label='answer'
+              placeholder='enter answer'
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setFaq((ps) => {
+                  return {
+                    ...ps,
+                    answer: e.target.value,
+                  };
+                });
+              }}
+              value={faq.answer}
+            />
+          </Flex>
+          <Button
+            fullWidth={true}
+            onClick={() => {
+              if (faq.answer && faq.question) {
+                const newFaq: FAQ = {
+                  ...faq,
+                  id: faqs.length,
+                };
+                setFaqs((prev) => [...prev, newFaq]);
+                setFaq({ question: '', answer: '' });
+                setFaqFormOpen(false);
+              }
+            }}
+          >
+            add to fAQ
+          </Button>
+        </form>
+      )}
+      <div className=' grid grid-cols-2 gap-4'>
+        {faqs.map((faq) => {
+          return (
+            <div
+              key={faq.id}
+              className=' shadow-md p-4 rounded-lg outline outline-base-light space-y-2'
+            >
+              <header className=' flex justify-between items-center'>
+                <h4 className=' font-semibold text-base-black text-lg'>
+                  <span>0{faq.id + 1}. </span>
+                  {faq.question}
+                </h4>
+                <span className=' flex gap-2 items-center'>
+                  <MdOutlineEditCalendar className=' text-xl text-base-dark hover:text-accent active:text-accent-secondary cursor-pointer' />
+                  <FaRegTrashAlt className=' text-lg text-base-dark hover:text-accent active:text-accent-secondary cursor-pointer' />
+                </span>
+              </header>
+              <p className=' text-base-dark font-normal'>A: {faq.answer}</p>
+            </div>
+          );
+        })}
+      </div>
+      <div></div>
+      <Button fullWidth={true} color='orange' onClick={() => {}}>
+        create my event
+      </Button>
     </Flex>
   );
 }
