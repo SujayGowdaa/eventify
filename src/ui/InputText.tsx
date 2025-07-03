@@ -4,7 +4,7 @@ type Props = {
   type?: string;
   placeholder: string;
   value: string | number;
-  onChange: (value: string | number) => void;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 };
 
 export default function InputText({
@@ -15,12 +15,6 @@ export default function InputText({
   value,
   onChange,
 }: Props) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value;
-    const finalValue = type === 'number' ? Number(raw) : raw;
-    onChange(finalValue);
-  };
-
   return (
     <div className='flex flex-col gap-4'>
       <label htmlFor={id} className='input-label'>
@@ -32,7 +26,7 @@ export default function InputText({
         type={type}
         placeholder={placeholder}
         value={value}
-        onChange={handleChange}
+        onChange={onChange}
       />
     </div>
   );

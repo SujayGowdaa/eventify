@@ -23,10 +23,11 @@ function formatDate(date: string): string {
 
 type HandleChange = { handleChange: (path: string, value: any) => void };
 
-export default function EventDateTimeCard({
+export default function EventDateTimeCardRecurring({
   type,
   startDate,
   startTime,
+  endDate,
   endTime,
   handleChange,
 }: OneDayEvent & HandleChange) {
@@ -40,15 +41,8 @@ export default function EventDateTimeCard({
           <FaRegTrashAlt
             className='text-2xl text-base-dark hover:text-accent active:text-accent-secondary cursor-pointer'
             onClick={() => {
-              handleChange('type', 'one_day_event');
-              handleChange('events', [
-                {
-                  type: 'one_day_event',
-                  startDate: '',
-                  startTime: '',
-                  endTime: '',
-                },
-              ]);
+              handleChange('type', 'recurring_event');
+              handleChange('events', []);
             }}
           />
         </span>
@@ -61,6 +55,10 @@ export default function EventDateTimeCard({
         <p>
           start date :{' '}
           <span className='text-base-black font-medium'>{startDate}</span>
+        </p>
+        <p>
+          end date :{' '}
+          <span className='text-base-black font-medium'>{endDate}</span>
         </p>
         <p>
           start time :{' '}

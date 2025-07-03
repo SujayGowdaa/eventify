@@ -1,46 +1,60 @@
 import Flex from '../ui/Flex';
 import HeroTitle from '../ui/HeroTitle';
 import HeroParagraph from '../ui/HeroParagraph';
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import { useState, useEffect } from 'react'; // Import useEffect
 import { MdCloudUpload } from 'react-icons/md';
-import type { Event } from '../types/event';
+import type { Event } from '../types/event'; // <--- FIX 1: Import Event type
+
+// Define the HandleChange type here, or import it from a common types file if available
+type HandleChange = <T extends keyof Event, U extends Event[T]>(
+  field: T,
+  value: U
+) => void;
 
 type Props = {
-  setFormData: Dispatch<SetStateAction<Event>>;
+  handleChange: HandleChange;
+  formData: Event;
 };
 
-export default function EventCover({ setFormData }: Props) {
+export default function EventCover({ handleChange, formData }: Props) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // <--- FIX 3: Use useEffect to set selectedImage based on formData
+  useEffect(() => {
+    // If formData.image already has a URL (e.g., loaded from localStorage)
+    if (formData.image) {
+      setSelectedImage(formData.image);
+    } else if (formData.coverImage instanceof File) {
+      // If a new file is selected (File object in coverImage)
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string);
+      };
+      reader.readAsDataURL(formData.coverImage);
+    } else {
+      // If neither is present, ensure selectedImage is null
+      setSelectedImage(null);
+    }
+  }, [formData.image, formData.coverImage]); // Re-run when these formData properties change
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
-      // Create a FileReader instance
+      // Create a FileReader instance for immediate preview
       const reader = new FileReader();
-
-      // Set the onload event handler for the reader
       reader.onloadend = () => {
-        // When the file is done loading, set the result (data URL) to state
         setSelectedImage(reader.result as string);
       };
-
-      // Read the file as a data URL
       reader.readAsDataURL(file);
 
-      // Optionally, you might also want to update your formData with the actual File object
-      // so you can send it to the server later.
-      // Make sure your setFormData can handle a File object.
-      setFormData((prevData) => ({
-        ...prevData,
-        coverImage: file, // Store the actual File object here for upload
-      }));
+      // <--- FIX 2: Pass the File object to 'coverImage' property
+      // 'image' is for the URL, 'coverImage' is for the File object
+      handleChange('coverImage', file);
     } else {
       setSelectedImage(null);
-      setFormData((prevData) => ({
-        ...prevData,
-        coverImage: null,
-      }));
+      // <--- FIX 2: Clear 'coverImage' when no file is selected
+      handleChange('coverImage', null);
     }
   };
 

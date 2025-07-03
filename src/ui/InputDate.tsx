@@ -1,14 +1,13 @@
 import { useRef } from 'react';
 
 type Props = {
-  id: string;
   type: 'date' | 'time';
   label: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export default function InputDate({ id, type, label, value, onChange }: Props) {
+export default function InputDate({ type, label, value, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   function openNativePicker() {
@@ -39,26 +38,28 @@ export default function InputDate({ id, type, label, value, onChange }: Props) {
   }
 
   return (
-    <div
-      onClick={openNativePicker}
-      className='relative inline-block rounded-full outline outline-base-medium px-4 py-2 text-base-dark max-w-max w-[180px] cursor-pointer select-none text-sm'
-    >
-      <span className='capitalize'>
-        {type === 'time'
-          ? value
-            ? formatTimeTo12Hour(value)
-            : `Choose ${label}`
-          : value || `Choose ${label}`}
-      </span>
-      <input
-        id={id}
-        ref={inputRef}
-        type={type}
-        onChange={onChange}
-        value={value}
-        min={getMinValue(type)}
-        className='absolute left-0 top-0 w-full h-full opacity-0'
-      />
+    <div className=' flex flex-col gap-2 capitalize text-base-black font-medium'>
+      <label htmlFor=''>{label}</label>
+      <div
+        onClick={openNativePicker}
+        className='relative inline-block rounded-full outline outline-base-medium px-4 py-2 text-base-dark max-w-max w-[180px] cursor-pointer select-none text-sm'
+      >
+        <span className='capitalize'>
+          {type === 'time'
+            ? value
+              ? formatTimeTo12Hour(value)
+              : `Choose ${label}`
+            : value || `Choose ${label}`}
+        </span>
+        <input
+          ref={inputRef}
+          type={type}
+          onChange={onChange}
+          value={value}
+          min={getMinValue(type)}
+          className='absolute left-0 top-0 w-full h-full opacity-0'
+        />
+      </div>
     </div>
   );
 }
