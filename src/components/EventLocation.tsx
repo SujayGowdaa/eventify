@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import Flex from '../ui/Flex';
 import InputDropdown from '../ui/InputDropdown';
 import InputRadio from '../ui/InputRadio';
 import InputText from '../ui/InputText';
+import type { Event } from '../types/event';
 
 type Props = {
   selectedLocation: 'online' | 'offline' | null;
@@ -20,10 +22,23 @@ export default function EventLocation({
   handleChange,
   formData,
 }: Props) {
+  const [linkError, setLinkError] = useState('');
+
+  // 🔍 Basic URL validation
+  function validateLink(url: string) {
+    const isValidURL = /^(https?:\/\/)[^\s/$.?#].[^\s]*$/i.test(url);
+    setLinkError(
+      isValidURL
+        ? ''
+        : 'Please enter a valid URL starting with http:// or https://'
+    );
+  }
+
   return (
-    <Flex className=' gap-4'>
+    <Flex className='gap-4'>
       <label className='input-label'>location</label>
-      <Flex className=' flex-row gap-8'>
+
+      <Flex className='flex-row gap-8'>
         <InputRadio
           name='location'
           id='online'
@@ -34,6 +49,7 @@ export default function EventLocation({
             handleChange('location', 'online');
             handleChange('locationDetails', { link: '' });
             setSelectedLocation('online');
+            setLinkError('');
           }}
         />
         <InputRadio
@@ -49,15 +65,17 @@ export default function EventLocation({
               country: '',
               state: '',
               address: '',
-            }); // Clear online link
+            });
             setSelectedLocation('offline');
+            setLinkError('');
           }}
         />
       </Flex>
-      {(selectedLocation === 'offline' && (
+
+      {selectedLocation === 'offline' && (
         <>
-          <div className=' w-full h-[360px] bg-base-light rounded-2xl'>Map</div>
-          <div className=' grid grid-cols-2 gap-8'>
+          <div className='w-full h-[360px] bg-base-light rounded-2xl'>Map</div>
+          <div className='grid grid-cols-2 gap-8'>
             <InputText
               type='number'
               id='pincode'
@@ -68,7 +86,6 @@ export default function EventLocation({
               }
               value={formData.locationDetails.pincode ?? ''}
             />
-
             <InputDropdown
               id='country'
               label='country'
@@ -82,7 +99,7 @@ export default function EventLocation({
               value={formData.locationDetails.country ?? ''}
             />
           </div>
-          <div className=' grid grid-cols-2 gap-8'>
+          <div className='grid grid-cols-2 gap-8'>
             <InputDropdown
               id='state'
               label='state'
@@ -106,18 +123,26 @@ export default function EventLocation({
             />
           </div>
         </>
-      )) ||
-        (selectedLocation === 'online' && (
+      )}
+
+      {selectedLocation === 'online' && (
+        <div className='w-full'>
           <InputText
             id='event link'
             label='event link'
-            placeholder='provide the event link.'
-            onChange={(e) =>
-              handleChange('locationDetails.link', e.target.value)
-            }
+            placeholder='Provide the event link.'
+            onChange={(e) => {
+              const value = e.target.value;
+              handleChange('locationDetails.link', value);
+              validateLink(value); // ✅ validate on each change
+            }}
             value={formData.locationDetails.link ?? ''}
           />
-        ))}
+          {linkError && (
+            <p className='text-red-600 text-sm mt-1'>{linkError}</p>
+          )}
+        </div>
+      )}
     </Flex>
   );
 }
