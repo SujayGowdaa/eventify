@@ -1,19 +1,15 @@
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 type Props = {
-  onClick: () => void;
   children: ReactNode;
+  isActive: boolean;
+  onClick: () => void;
 };
 
-export default function Chips({ onClick, children }: Props) {
-  const [isActive, setIsActive] = useState<boolean>(false);
-
+export default function Chips({ children, isActive, onClick }: Props) {
   return (
     <button
-      onClick={() => {
-        setIsActive(!isActive);
-        onClick();
-      }}
+      onClick={onClick}
       className={`${
         isActive
           ? 'button-chips-active bg-accent-secondary outline-accent-secondary-dark'

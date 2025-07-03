@@ -12,7 +12,7 @@ type LinkProps = {
 
 type ButtonProps = {
   children: ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
   color?: 'blue' | 'orange';
   isBtnEvent?: boolean;
   fullWidth: boolean;

@@ -3,8 +3,8 @@ type Props = {
   label: string;
   type?: string;
   placeholder: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  value: string;
+  value: string | number;
+  onChange: (value: string | number) => void;
 };
 
 export default function InputText({
@@ -12,21 +12,27 @@ export default function InputText({
   label,
   type = 'text',
   placeholder,
-  onChange,
   value,
+  onChange,
 }: Props) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value;
+    const finalValue = type === 'number' ? Number(raw) : raw;
+    onChange(finalValue);
+  };
+
   return (
-    <div className=' flex flex-col gap-4'>
+    <div className='flex flex-col gap-4'>
       <label htmlFor={id} className='input-label'>
         {label}
       </label>
       <input
         id={id}
+        className='input-field'
         type={type}
         placeholder={placeholder}
-        onChange={onChange}
-        className='input-field'
         value={value}
+        onChange={handleChange}
       />
     </div>
   );

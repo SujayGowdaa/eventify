@@ -1,41 +1,32 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 type Props = {
+  id: string;
   type: 'date' | 'time';
   label: string;
-  onChange: () => void;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export default function InputDate({ type, label, onChange }: Props) {
-  const [dateTime, setDateTime] = useState('');
+export default function InputDate({ id, type, label, value, onChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   function openNativePicker() {
     const input = inputRef.current;
     if (!input) return;
-
     if ('showPicker' in input) {
       input.showPicker();
     } else {
-      (input as HTMLInputElement).focus();
-      (input as HTMLInputElement).click();
+      input.focus();
+      input.click();
     }
   }
+
   function getMinValue(type: 'date' | 'time') {
     const now = new Date();
-
-    if (type === 'date') {
-      // Return YYYY-MM-DD
-      return now.toISOString().split('T')[0];
-    }
-
-    if (type === 'time') {
-      // Return HH:MM (24h format)
-      const pad = (n: number) => n.toString().padStart(2, '0');
-      return `${pad(now.getHours())}:${pad(now.getMinutes())}`;
-    }
-
-    return '';
+    if (type === 'date') return now.toISOString().split('T')[0];
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    return `${pad(now.getHours())}:${pad(now.getMinutes())}`;
   }
 
   function formatTimeTo12Hour(time24: string): string {
@@ -43,10 +34,7 @@ export default function InputDate({ type, label, onChange }: Props) {
     const [hourStr, minute] = time24.split(':');
     let hour = parseInt(hourStr, 10);
     const ampm = hour >= 12 ? 'PM' : 'AM';
-
-    hour = hour % 12;
-    if (hour === 0) hour = 12;
-
+    hour = hour % 12 || 12;
     return `${hour}:${minute} ${ampm}`;
   }
 
@@ -57,21 +45,19 @@ export default function InputDate({ type, label, onChange }: Props) {
     >
       <span className='capitalize'>
         {type === 'time'
-          ? dateTime
-            ? formatTimeTo12Hour(dateTime)
+          ? value
+            ? formatTimeTo12Hour(value)
             : `Choose ${label}`
-          : dateTime || `Choose ${label}`}
+          : value || `Choose ${label}`}
       </span>
       <input
+        id={id}
         ref={inputRef}
         type={type}
-        value={dateTime}
-        onChange={(e) => {
-          onChange();
-          setDateTime(e.target.value);
-        }}
-        className='absolute left-0 top-0 w-full h-full opacity-0'
+        onChange={onChange}
+        value={value}
         min={getMinValue(type)}
+        className='absolute left-0 top-0 w-full h-full opacity-0'
       />
     </div>
   );

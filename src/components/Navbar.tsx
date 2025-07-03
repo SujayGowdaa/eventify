@@ -5,9 +5,7 @@ import { Link } from 'react-router-dom';
 function Navbar() {
   const navbarLinks = [
     { label: 'Home', href: '/' },
-    { label: 'Attend Event', href: '/attend-event' },
     { label: 'Create Event', href: '/create-event' },
-    { label: 'Contact', href: '/contact' },
     { label: 'Login/Sign Up', href: '/login' },
   ];
 

@@ -107,7 +107,7 @@ export default function Home() {
             label='find events that inspire you!'
             placeholder='Search by event name'
           />
-          <Category />
+          <Category value={['']} onChange={() => {}} />
           <BrowseBy />
           <p className=' capitalize text-sm text-base-dark'>
             results »{' '}
