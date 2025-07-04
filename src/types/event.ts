@@ -55,7 +55,7 @@ export type RecurringEvent = {
 };
 
 export type BaseCommonFields = {
-  image: string;
+  image: string; // Likely for a general poster image URL if different from cover
   name: string;
   description?: string;
   category: string[];
@@ -66,7 +66,8 @@ export type BaseCommonFields = {
     | [VipTicket, GeneralTicket]
     | [GeneralTicket, VipTicket];
   faqs: Faq[];
-  coverImage?: File | null;
+  // --- IMPORTANT CHANGE HERE ---
+  coverImage?: string | null; // Changed from File | null to string | null
 };
 
 // Enforce correct `type` ↔ `events` match

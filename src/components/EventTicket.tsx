@@ -94,7 +94,7 @@ export default function EventTicket({
     const updatedTickets = formData.tickets.filter((t) => t.id !== idToDelete);
     handleChange('tickets', updatedTickets);
   }
-  console.log(formData.tickets.length !== 2);
+
   return (
     <>
       <Flex className='gap-4'>

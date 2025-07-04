@@ -21,17 +21,19 @@ function formatDate(date: string): string {
   });
 }
 
-type HandleChange = { handleChange: (path: string, value: any) => void };
+type Props = OneDayEvent & {
+  onDelete: () => void;
+};
 
 export default function EventDateTimeCard({
   type,
   startDate,
   startTime,
   endTime,
-  handleChange,
-}: OneDayEvent & HandleChange) {
+  onDelete,
+}: Props) {
   return (
-    <div className=' max-w-full shadow-md rounded-2xl p-8 flex flex-col gap-4 outline outline-base-light bg-white'>
+    <div className='max-w-full shadow-md rounded-2xl p-8 flex flex-col gap-4 outline outline-base-light bg-white'>
       <header className='flex justify-between items-center'>
         <h4 className='text-3xl font-semibold text-gradient-blue'>
           {formatDate(startDate)}
@@ -39,17 +41,7 @@ export default function EventDateTimeCard({
         <span className='flex gap-4 items-center'>
           <FaRegTrashAlt
             className='text-2xl text-base-dark hover:text-accent active:text-accent-secondary cursor-pointer'
-            onClick={() => {
-              handleChange('type', 'one_day_event');
-              handleChange('events', [
-                {
-                  type: 'one_day_event',
-                  startDate: '',
-                  startTime: '',
-                  endTime: '',
-                },
-              ]);
-            }}
+            onClick={onDelete}
           />
         </span>
       </header>

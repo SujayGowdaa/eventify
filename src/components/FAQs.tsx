@@ -132,37 +132,39 @@ export default function FAQs({ handleChange, formData }: FAQComponentProps) {
           </form>
         </Modal>
       )}
-      <div className='grid grid-cols-2 gap-4'>
-        {/* Render FAQs from formData.faqs */}
-        {formData.faqs.map((faqItem, index) => {
-          // Renamed faq to faqItem to avoid conflict with state
-          return (
-            <div
-              key={faqItem.id}
-              className='shadow-md p-4 rounded-lg outline outline-base-light space-y-2'
-            >
-              <header className='flex justify-between items-center'>
-                <h4 className='font-semibold text-base-black text-lg'>
-                  <span>{index + 1}. </span>{' '}
-                  {/* Use index for display numbering */}
-                  {faqItem.question}
-                </h4>
-                <span className='flex gap-2 items-center'>
-                  <MdOutlineEditCalendar
-                    className='text-xl text-base-dark hover:text-accent active:text-accent-secondary cursor-pointer'
-                    onClick={() => handleEditFaq(faqItem)}
-                  />
-                  <FaRegTrashAlt
-                    className='text-lg text-base-dark hover:text-accent active:text-accent-secondary cursor-pointer'
-                    onClick={() => handleDeleteFaq(faqItem.id)}
-                  />
-                </span>
-              </header>
-              <p className='text-base-dark font-normal'>A: {faqItem.answer}</p>
-            </div>
-          );
-        })}
-      </div>
+      {formData.faqs.length > 0 && (
+        <div className='grid grid-cols-2 gap-4'>
+          {formData.faqs.map((faqItem, index) => {
+            return (
+              <div
+                key={faqItem.id}
+                className='shadow-md p-4 rounded-lg outline outline-base-light space-y-2'
+              >
+                <header className='flex justify-between items-center'>
+                  <h4 className='font-semibold text-base-black text-lg'>
+                    <span>{index + 1}. </span>{' '}
+                    {/* Use index for display numbering */}
+                    {faqItem.question}
+                  </h4>
+                  <span className='flex gap-2 items-center'>
+                    <MdOutlineEditCalendar
+                      className='text-xl text-base-dark hover:text-accent active:text-accent-secondary cursor-pointer'
+                      onClick={() => handleEditFaq(faqItem)}
+                    />
+                    <FaRegTrashAlt
+                      className='text-lg text-base-dark hover:text-accent active:text-accent-secondary cursor-pointer'
+                      onClick={() => handleDeleteFaq(faqItem.id)}
+                    />
+                  </span>
+                </header>
+                <p className='text-base-dark font-normal'>
+                  A: {faqItem.answer}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </>
   );
 }

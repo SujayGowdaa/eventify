@@ -1,11 +1,13 @@
+/* eslint-disable no-constant-condition */
 import Flex from '../ui/Flex';
 import HeroTitle from '../ui/HeroTitle';
 import HeroParagraph from '../ui/HeroParagraph';
-import { useState, useEffect } from 'react'; // Import useEffect
+import { useState, useEffect } from 'react';
 import { MdCloudUpload } from 'react-icons/md';
-import type { Event } from '../types/event'; // <--- FIX 1: Import Event type
+import type { Event } from '../types/event';
 
 // Define the HandleChange type here, or import it from a common types file if available
+// coverImage will now store a string (Base64) or null
 type HandleChange = <T extends keyof Event, U extends Event[T]>(
   field: T,
   value: U
@@ -17,44 +19,42 @@ type Props = {
 };
 
 export default function EventCover({ handleChange, formData }: Props) {
+  // selectedImage will always store the Base64 URL for display
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  // <--- FIX 3: Use useEffect to set selectedImage based on formData
+  // Use useEffect to set selectedImage based on formData.coverImage
+  // (which will now store the Base64 string from localStorage or direct input)
   useEffect(() => {
-    // If formData.image already has a URL (e.g., loaded from localStorage)
-    if (formData.image) {
-      setSelectedImage(formData.image);
-    } else if (formData.coverImage instanceof File) {
-      // If a new file is selected (File object in coverImage)
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedImage(reader.result as string);
-      };
-      reader.readAsDataURL(formData.coverImage);
+    if (formData.coverImage) {
+      setSelectedImage(formData.coverImage);
     } else {
-      // If neither is present, ensure selectedImage is null
       setSelectedImage(null);
     }
-  }, [formData.image, formData.coverImage]); // Re-run when these formData properties change
+    // Only re-run if formData.coverImage changes
+  }, [formData.coverImage]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
 
     if (file) {
-      // Create a FileReader instance for immediate preview
       const reader = new FileReader();
       reader.onloadend = () => {
-        setSelectedImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+        const base64String = reader.result as string;
+        setSelectedImage(base64String); // Set for immediate preview
 
-      // <--- FIX 2: Pass the File object to 'coverImage' property
-      // 'image' is for the URL, 'coverImage' is for the File object
-      handleChange('coverImage', file);
+        // Pass the Base64 string to 'coverImage' property in formData
+        // This is the key change for persistence
+        // The type assertion 'as any' is a workaround because TypeScript
+        // doesn't fully understand the dynamic nature of handleChange with union types.
+        // The crucial part is that `base64String` is `string | null` which matches
+        // the new `coverImage` type.
+        handleChange('coverImage', base64String as any);
+      };
+      reader.readAsDataURL(file); // Read file as Base64
     } else {
       setSelectedImage(null);
-      // <--- FIX 2: Clear 'coverImage' when no file is selected
-      handleChange('coverImage', null);
+      // Clear 'coverImage' in formData when no file is selected
+      handleChange('coverImage', null as any);
     }
   };
 

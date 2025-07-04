@@ -1,12 +1,21 @@
-import type { Dispatch, SetStateAction } from 'react';
+import {
+  useEffect,
+  useState,
+  useRef,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 import Flex from '../ui/Flex';
 import InputRadio from '../ui/InputRadio';
 import InputDate from '../ui/InputDate';
 import EventDateTimeCard from './EventDateTimeCard';
-import type { Event } from '../types/event';
-import { getDatesBetween } from '../lib/dateUtils';
-import { useEffect, useState } from 'react';
 import EventDateTimeCardRecurring from './EventDateTimeCardRecurring';
+import { getDatesBetween } from '../lib/dateUtils';
+import type {
+  Event,
+  OneDayEvent as OneDayEventType,
+  RecurringEvent as RecurringEventType,
+} from '../types/event';
 
 type Props = {
   selectedEventType: 'one_day_event' | 'recurring_event' | null;
@@ -23,102 +32,203 @@ export default function EventType({
   handleChange,
   formData,
 }: Props) {
-  const [recurringInput, setRecurringInput] = useState({
-    startDate: '',
-    endDate: '',
-    startTime: '',
-    endTime: '',
-  });
-  const [validationError, setValidationError] = useState('');
-
-  useEffect(() => {
-    if (
-      selectedEventType === 'recurring_event' &&
-      formData.events?.length > 0 &&
-      !recurringInput.startDate && // avoid overwriting once edited
-      !recurringInput.endDate &&
-      !recurringInput.startTime &&
-      !recurringInput.endTime
-    ) {
-      const [event] = formData.events;
-      setRecurringInput({
+  // --- CHANGE 1: Initialize recurringInput from formData ---
+  const [recurringInput, setRecurringInput] = useState(() => {
+    if (formData.type === 'recurring_event' && formData.events?.length > 0) {
+      const event = formData.events[0] as RecurringEventType;
+      return {
         startDate: event.startDate ?? '',
         endDate: event.endDate ?? '',
         startTime: event.startTime ?? '',
         endTime: event.endTime ?? '',
-      });
+      };
     }
-  }, [selectedEventType, formData.events]);
+    return {
+      startDate: '',
+      endDate: '',
+      startTime: '',
+      endTime: '',
+    };
+  });
+
+  // --- CHANGE 2: Initialize oneDayInput from formData ---
+  const [oneDayInput, setOneDayInput] = useState<OneDayEventType>(() => {
+    if (formData.type === 'one_day_event' && formData.events?.length > 0) {
+      const event = formData.events[0] as OneDayEventType;
+      return {
+        type: 'one_day_event', // Make sure type is correctly set
+        startDate: event.startDate ?? '',
+        startTime: event.startTime ?? '',
+        endTime: event.endTime ?? '',
+      };
+    }
+    return {
+      type: 'one_day_event',
+      startDate: '',
+      startTime: '',
+      endTime: '',
+    };
+  });
+
+  const [validationError, setValidationError] = useState('');
+  const isInitialMount = useRef(true);
+  const justSwitchedTypeRef = useRef(false);
 
   useEffect(() => {
-    if (
-      selectedEventType === 'recurring_event' &&
-      recurringInput.startDate &&
-      recurringInput.endDate &&
-      recurringInput.startTime &&
-      recurringInput.endTime
-    ) {
-      const timeout = setTimeout(() => {
-        const startDateObj = new Date(recurringInput.startDate);
-        const endDateObj = new Date(recurringInput.endDate);
+    isInitialMount.current = false;
+  }, []);
 
-        // Validate date range first
-        if (startDateObj > endDateObj) {
-          setValidationError('End date must be after or equal to start date');
+  // --- CHANGE 3: Adjust the sync useEffect to NOT run if local state is already synced ---
+  useEffect(() => {
+    // If we just switched type via radio buttons, the local state will be reset.
+    // We want the new type's inputs to remain blank initially, not immediately
+    // populated by old formData, so we skip this sync for one render cycle.
+    if (justSwitchedTypeRef.current) {
+      justSwitchedTypeRef.current = false;
+      return;
+    }
+
+    // Now, handle the synchronization from formData to local state.
+    // This runs on hard reloads or when formData changes (e.g., event deleted)
+    // and the type matches.
+    if (selectedEventType === 'one_day_event') {
+      const event = formData.events?.[0] as OneDayEventType | undefined;
+      const newState = {
+        type: 'one_day_event',
+        startDate: event?.startDate ?? '',
+        startTime: event?.startTime ?? '',
+        endTime: event?.endTime ?? '',
+      };
+      // Only update if the local state is genuinely different
+      if (JSON.stringify(oneDayInput) !== JSON.stringify(newState)) {
+        setOneDayInput(newState);
+      }
+    } else if (selectedEventType === 'recurring_event') {
+      const event = formData.events?.[0] as RecurringEventType | undefined;
+      const newState = {
+        startDate: event?.startDate ?? '',
+        endDate: event?.endDate ?? '',
+        startTime: event?.startTime ?? '',
+        endTime: event?.endTime ?? '',
+      };
+      // Only update if the local state is genuinely different
+      if (JSON.stringify(recurringInput) !== JSON.stringify(newState)) {
+        setRecurringInput(newState);
+      }
+    }
+  }, [selectedEventType, formData.events, formData.type]); // dependencies for this sync effect
+
+  // Push one day input -> formData
+  useEffect(() => {
+    if (isInitialMount.current) return; // Skip on initial mount
+
+    if (selectedEventType === 'one_day_event') {
+      const { startDate, startTime, endTime } = oneDayInput;
+
+      // If inputs are incomplete, ensure formData.events is empty
+      if (!startDate || !startTime || !endTime) {
+        if (formData.events.length > 0) {
+          // Only call handleChange if events array is not already empty
+          handleChange('events', []);
+        }
+        return;
+      }
+
+      const newData: OneDayEventType = {
+        type: 'one_day_event',
+        startDate,
+        startTime,
+        endTime,
+      };
+
+      const currentEventsJson = JSON.stringify(formData.events);
+      const newEventsJson = JSON.stringify([newData]);
+
+      // Only call handleChange if the derived events array is truly different
+      if (currentEventsJson !== newEventsJson) {
+        handleChange('events', [newData]);
+      }
+    }
+  }, [oneDayInput, selectedEventType, handleChange, formData.events]); // formData.events added back here for accurate comparison against current state
+
+  // Push recurring input -> formData
+  useEffect(() => {
+    if (isInitialMount.current) return; // Skip on initial mount
+
+    if (selectedEventType === 'recurring_event') {
+      const { startDate, endDate, startTime, endTime } = recurringInput;
+
+      // If inputs are incomplete, clear validation and ensure formData.events is empty
+      if (!startDate || !endDate || !startTime || !endTime) {
+        if (formData.events.length > 0) handleChange('events', []);
+        setValidationError('');
+        return;
+      }
+
+      const timeout = setTimeout(() => {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if (start > end) {
+          setValidationError('End date must be after start date');
+          handleChange('events', []);
           return;
         }
 
-        const [startHour, startMin] = recurringInput.startTime
-          .split(':')
-          .map(Number);
-        const [endHour, endMin] = recurringInput.endTime.split(':').map(Number);
-        const totalStartMins = startHour * 60 + startMin;
-        const totalEndMins = endHour * 60 + endMin;
+        const [sh, sm] = startTime.split(':').map(Number);
+        const [eh, em] = endTime.split(':').map(Number);
+        const startMins = sh * 60 + sm;
+        const endMins = eh * 60 + em;
 
-        if (recurringInput.startDate === recurringInput.endDate) {
-          // Same day: end time must be later
-          if (totalEndMins <= totalStartMins) {
-            setValidationError(
-              'End time must be after start time on the same day'
-            );
-            return;
-          }
-        } else {
-          // Cross-day: end time must still be after start time logically
-          if (totalEndMins <= totalStartMins) {
-            setValidationError(
-              'End time must be after start time even across multiple days'
-            );
-            return;
-          }
+        if (startDate === endDate && endMins <= startMins) {
+          setValidationError('End time must be after start time');
+          handleChange('events', []);
+          return;
         }
 
-        // All validations passed
+        if (startDate !== endDate && endMins <= startMins) {
+          setValidationError('End time must be after start time across days');
+          handleChange('events', []);
+          return;
+        }
+
         setValidationError('');
-        const dates = getDatesBetween(
-          recurringInput.startDate,
-          recurringInput.endDate
-        );
+        const dates = getDatesBetween(startDate, endDate);
         const recurringEvents = dates.map((date) => ({
           type: 'recurring_event',
           startDate: date,
-          endDate: recurringInput.endDate,
-          startTime: recurringInput.startTime,
-          endTime: recurringInput.endTime,
+          endDate,
+          startTime,
+          endTime,
         }));
 
-        handleChange('events', recurringEvents);
+        const currentEventsJson = JSON.stringify(formData.events);
+        const newEventsJson = JSON.stringify(recurringEvents);
+
+        if (currentEventsJson !== newEventsJson) {
+          handleChange('events', recurringEvents);
+        }
       }, 300);
 
       return () => clearTimeout(timeout);
-    } else {
-      // Don't trigger handleChange if any input is incomplete
-      setValidationError('');
     }
-  }, [selectedEventType, recurringInput]);
+  }, [selectedEventType, recurringInput, handleChange, formData.events]); // formData.events added back here for accurate comparison against current state
+
+  // 🗑️ Handle delete for one day
+  const handleDeleteOneDay = () => {
+    setOneDayInput({
+      type: 'one_day_event',
+      startDate: '',
+      startTime: '',
+      endTime: '',
+    });
+    // This will trigger the oneDayInput pushing effect, which will then set formData.events to []
+    // as the inputs become empty.
+  };
 
   return (
     <Flex className='gap-4'>
+      {/* Event type selection */}
       <Flex className='gap-4'>
         <label className='input-label'>type</label>
         <Flex className='flex-row gap-8'>
@@ -128,16 +238,17 @@ export default function EventType({
             label='one day event'
             checked={selectedEventType === 'one_day_event'}
             onChange={() => {
+              justSwitchedTypeRef.current = true; // Flag that we just switched
               handleChange('type', 'one_day_event');
-              handleChange('events', [
-                {
-                  type: 'one_day_event',
-                  startDate: '',
-                  startTime: '',
-                  endTime: '',
-                },
-              ]);
+              handleChange('events', []); // Clear events in parent state immediately
               setSelectedEventType('one_day_event');
+              // Reset local oneDayInput state immediately when switching to it
+              setOneDayInput({
+                type: 'one_day_event',
+                startDate: '',
+                startTime: '',
+                endTime: '',
+              });
             }}
           />
           <InputRadio
@@ -146,14 +257,23 @@ export default function EventType({
             label='recurring event'
             checked={selectedEventType === 'recurring_event'}
             onChange={() => {
+              justSwitchedTypeRef.current = true; // Flag that we just switched
               handleChange('type', 'recurring_event');
-              handleChange('events', []);
+              handleChange('events', []); // Clear events in parent state immediately
               setSelectedEventType('recurring_event');
+              // Reset local recurringInput state immediately when switching to it
+              setRecurringInput({
+                startDate: '',
+                endDate: '',
+                startTime: '',
+                endTime: '',
+              });
             }}
           />
         </Flex>
       </Flex>
 
+      {/* One day input */}
       {selectedEventType === 'one_day_event' && (
         <Flex className='gap-8'>
           <Flex className='gap-4'>
@@ -163,47 +283,57 @@ export default function EventType({
                 type='date'
                 label='start date'
                 onChange={(e) =>
-                  handleChange('events.0.startDate', e.target.value)
+                  setOneDayInput((prev) => ({
+                    ...prev,
+                    startDate: e.target.value,
+                  }))
                 }
-                value={formData.events?.[0]?.startDate ?? ''}
+                value={oneDayInput.startDate}
               />
               <InputDate
                 type='time'
                 label='start time'
                 onChange={(e) =>
-                  handleChange('events.0.startTime', e.target.value)
+                  setOneDayInput((prev) => ({
+                    ...prev,
+                    startTime: e.target.value,
+                  }))
                 }
-                value={formData.events?.[0]?.startTime ?? ''}
+                value={oneDayInput.startTime}
               />
               <InputDate
                 type='time'
                 label='end time'
+                label2='end time'
                 onChange={(e) =>
-                  handleChange('events.0.endTime', e.target.value)
+                  setOneDayInput((prev) => ({
+                    ...prev,
+                    endTime: e.target.value,
+                  }))
                 }
-                value={formData.events?.[0]?.endTime ?? ''}
+                value={oneDayInput.endTime}
               />
             </Flex>
           </Flex>
-          {formData.events?.[0]?.type &&
-          formData.events?.[0]?.startDate &&
-          formData.events?.[0]?.startTime &&
-          formData.events?.[0]?.endTime ? (
+          {oneDayInput.startDate &&
+          oneDayInput.startTime &&
+          oneDayInput.endTime ? (
             <EventDateTimeCard
-              type={formData.events?.[0]?.type}
-              startDate={formData.events?.[0]?.startDate}
-              startTime={formData.events?.[0]?.startTime}
-              endTime={formData.events?.[0]?.endTime}
-              handleChange={handleChange}
+              type={'one_day_event'}
+              startDate={oneDayInput.startDate}
+              startTime={oneDayInput.startTime}
+              endTime={oneDayInput.endTime}
+              onDelete={handleDeleteOneDay} // Ensure onDelete is passed and used
             />
           ) : (
             <div className='bg-base-light p-8 capitalize text-base-dark rounded-2xl'>
-              add date & time to show events
+              add date & time to show event
             </div>
           )}
         </Flex>
       )}
 
+      {/* Recurring input */}
       {selectedEventType === 'recurring_event' && (
         <Flex className='gap-8'>
           <Flex className='gap-4'>
@@ -212,61 +342,53 @@ export default function EventType({
               <InputDate
                 type='date'
                 label='start date'
-                onChange={(e) => {
-                  const value = e.target.value;
+                onChange={(e) =>
                   setRecurringInput((prev) => ({
                     ...prev,
-                    startDate: value,
-                  }));
-                  // handleChange('events.0.startDate', value);
-                }}
-                value={recurringInput.startDate ?? ''}
+                    startDate: e.target.value,
+                  }))
+                }
+                value={recurringInput.startDate}
               />
               <InputDate
                 type='date'
                 label='end date'
-                onChange={(e) => {
-                  const value = e.target.value;
+                onChange={(e) =>
                   setRecurringInput((prev) => ({
                     ...prev,
-                    endDate: value,
-                  }));
-                  // handleChange('events.0.endDate', value);
-                }}
-                value={recurringInput.endDate ?? ''}
+                    endDate: e.target.value,
+                  }))
+                }
+                value={recurringInput.endDate}
               />
               <InputDate
                 type='time'
                 label='start time'
-                onChange={(e) => {
-                  const value = e.target.value;
+                onChange={(e) =>
                   setRecurringInput((prev) => ({
                     ...prev,
-                    startTime: value,
-                  }));
-                  // handleChange('events.0.startTime', value);
-                }}
-                value={recurringInput.startTime ?? ''}
+                    startTime: e.target.value,
+                  }))
+                }
+                value={recurringInput.startTime}
               />
               <InputDate
                 type='time'
                 label='end time'
-                onChange={(e) => {
-                  const value = e.target.value;
+                onChange={(e) =>
                   setRecurringInput((prev) => ({
                     ...prev,
-                    endTime: value,
-                  }));
-                  // handleChange('events.0.endTime', value);
-                }}
-                value={recurringInput.endTime ?? ''}
+                    endTime: e.target.value,
+                  }))
+                }
+                value={recurringInput.endTime}
               />
             </Flex>
-          </Flex>{' '}
+          </Flex>
           {validationError && (
             <div className='text-red-600 mt-[-24px]'>{validationError}</div>
           )}
-          {Array.isArray(formData.events) && formData.events.length > 0 ? (
+          {formData.events.length > 0 ? (
             <div className='grid grid-cols-1 md:grid-cols-2 gap-4 xl:grid-cols-3'>
               {formData.events.map((event, index) => (
                 <EventDateTimeCardRecurring
@@ -276,7 +398,7 @@ export default function EventType({
                   endDate={event.endDate}
                   startTime={event.startTime}
                   endTime={event.endTime}
-                  handleChange={handleChange}
+                  handleChange={handleChange} // This handleChange is likely for an internal delete action if the card supports it
                 />
               ))}
             </div>
