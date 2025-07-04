@@ -12,12 +12,13 @@ type LinkProps = {
 
 type ButtonProps = {
   children: ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   color?: 'blue' | 'orange';
   isBtnEvent?: boolean;
   fullWidth: boolean;
   isOutline?: boolean;
   buttonType?: 'submit' | 'button';
+  isDisabled?: boolean;
 };
 
 type Props = LinkProps | ButtonProps;
@@ -61,6 +62,7 @@ export default function Button({
           }
           ${isOutline && 'button-outline-blue'} 
           ${fullWidth ? 'w-full' : 'max-w-max'} group`}
+        disabled={props.isDisabled}
       >
         {children}
         <FiArrowRightCircle

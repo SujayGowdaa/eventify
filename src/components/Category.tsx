@@ -1,16 +1,20 @@
 import Chips from '../ui/Chips';
 import Flex from '../ui/Flex';
+import type { Event } from '../types/event';
 
 type Props = {
   hideLabel?: boolean;
-  value: string[];
-  onChange: (value: string[]) => void;
+  handleChange: <T extends keyof Event, U extends Event[T]>(
+    field: T,
+    value: U
+  ) => void;
+  formData: Event;
 };
 
 export default function Category({
   hideLabel = false,
-  value,
-  onChange,
+  handleChange,
+  formData,
 }: Props) {
   const allCategories = [
     'Conferences & Seminars',
@@ -27,11 +31,12 @@ export default function Category({
   ];
 
   function toggleCategory(cat: string) {
-    const updated = value.includes(cat)
-      ? value.filter((c) => c !== cat)
-      : [...value, cat];
+    const current = formData.category || [];
+    const updated = current.includes(cat)
+      ? current.filter((c) => c !== cat)
+      : [...current, cat];
 
-    onChange(updated);
+    handleChange('category', updated);
   }
 
   return (
@@ -42,10 +47,10 @@ export default function Category({
         </label>
       )}
       <div className='flex gap-4 flex-wrap'>
-        {allCategories?.map((cat) => (
+        {allCategories.map((cat) => (
           <Chips
             key={cat}
-            isActive={value.includes(cat)}
+            isActive={formData.category?.includes(cat)}
             onClick={() => toggleCategory(cat)}
           >
             {cat}

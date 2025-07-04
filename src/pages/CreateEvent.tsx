@@ -45,8 +45,6 @@ export default function CreateEvent() {
   const [selectedEventType, setSelectedEventType] = useState(
     formData.type || ''
   );
-  // const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  // const [isFaqFormOpen, setFaqFormOpen] = useState(false);
 
   function handleChange(path: string, value: any) {
     setFormData((prev) => {
@@ -68,8 +66,6 @@ export default function CreateEvent() {
     localStorage.setItem('event', JSON.stringify(formData));
   }, [formData]);
 
-  console.log(formData);
-
   return (
     <form className='flex flex-col gap-10'>
       <EventCover handleChange={handleChange} formData={formData} />
@@ -90,15 +86,15 @@ export default function CreateEvent() {
         formData={formData}
       />
 
-      {/* <Category value={selectedCategories} onChange={setSelectedCategories} /> */}
+      <Category handleChange={handleChange} formData={formData} />
 
-      {/* <EventTicket /> */}
+      <EventTicket handleChange={handleChange} formData={formData} />
 
-      {/* <FAQs isFaqFormOpen={isFaqFormOpen} setFaqFormOpen={setFaqFormOpen} /> */}
+      <FAQs handleChange={handleChange} formData={formData} />
 
-      {/* <Button fullWidth color='orange' buttonType='submit'>
+      <Button fullWidth color='orange' buttonType='submit'>
         create my event
-      </Button> */}
+      </Button>
     </form>
   );
 }
